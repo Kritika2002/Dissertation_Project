@@ -1,0 +1,102 @@
+post gres schema and endpoint code
+
+CREATE TABLE cities (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  -- Additional city-related columns if needed
+);
+
+CREATE TABLE historical_weather (
+  id SERIAL PRIMARY KEY,
+  city_id INTEGER REFERENCES cities(id),
+  date DATE NOT NULL,
+  max_temperature DECIMAL(5, 2),
+  min_temperature DECIMAL(5, 2),
+  expected_rainfall DECIMAL(5, 2),
+  -- Additional historical weather-related columns if needed
+);
+
+CREATE TABLE current_weather (
+  id SERIAL PRIMARY KEY,
+  city_id INTEGER REFERENCES cities(id),
+  temperature DECIMAL(5, 2),
+  humidity DECIMAL(5, 2),
+  wind_speed DECIMAL(5, 2),
+  -- Additional current weather-related columns if needed
+);
+
+CREATE TABLE tonight_forecast (
+  id SERIAL PRIMARY KEY,
+  city_id INTEGER REFERENCES cities(id),
+  min_temperature DECIMAL(5, 2),
+  expected_rainfall DECIMAL(5, 2),
+  -- Additional tonight's forecast-related columns if needed
+);
+
+In this updated schema, we have four tables:
+
+cities table: Stores information about the cities.
+
+historical_weather table: Stores historical weather data for each city and date.
+
+current_weather table: Stores non-historical data for the current weather conditions.
+
+tonight_forecast table: Stores non-historical data for tonight's weather forecast.
+
+The cities table remains the same as before.
+
+The historical_weather table has the following columns:
+
+id: A unique identifier for each historical weather data entry.
+city_id: A foreign key referencing the id column in the cities table to associate the historical weather data with a specific city.
+date: The date for which the historical weather data is recorded.
+max_temperature: The maximum temperature for the day.
+min_temperature: The minimum temperature for the day.
+expected_rainfall: The expected rainfall for the day.
+You can add additional columns to store any other relevant historical weather data.
+The current_weather table has the following columns:
+
+id: A unique identifier for each current weather data entry.
+city_id: A foreign key referencing the id column in the cities table to associate the current weather data with a specific city.
+temperature: The current temperature.
+humidity: The current humidity.
+wind_speed: The current wind speed.
+You can add additional columns to store any other relevant current weather data.
+The tonight_forecast table has the following columns:
+
+id: A unique identifier for each tonight's forecast entry.
+city_id: A foreign key referencing the id column in the cities table to associate the tonight's forecast data with a specific city.
+min_temperature: The minimum temperature for tonight.
+expected_rainfall: The expected rainfall for tonight.
+You can add additional columns to store any other relevant tonight's forecast data.
+This schema allows you to store historical weather data separately and non-historical data for the current weather conditions, as well as tonight's forecast, in their respective tables.
+----------------------------------------------------
+endpoint:
+## API Endpoints
+
+### Current Weather
+- **Endpoint:** `GET /weather/{city_id}`
+- **Description:** Retrieves the current weather conditions for a specific city.
+- **Parameters:**
+  - `city_id` (path parameter): The ID of the city for which to retrieve the weather information.
+  - `units` (query parameter, optional): The units of measurement for the weather data (e.g., Celsius, Fahrenheit).
+
+### Today's Forecast
+- **Endpoint:** `GET /weather/forecast/today/{city_id}`
+- **Description:** Provides the weather forecast for the current day in a specific city.
+- **Parameters:**
+  - `city_id` (path parameter): The ID of the city for which to retrieve the forecast.
+
+### Tonight's Forecast
+- **Endpoint:** `GET /weather/forecast/tonight/{city_id}`
+- **Description:** Gives the weather forecast specifically for tonight in a specific city.
+- **Parameters:**
+  - `city_id` (path parameter): The ID of the city for which to retrieve the forecast.
+
+### Historical Data
+- **Endpoint:** `GET /weather/history/{city_id}`
+- **Description:** Retrieves historical weather data for a specific city.
+- **Parameters:**
+  - `city_id` (path parameter): The ID of the city for which to retrieve the historical data.
+  - `start_date` (query parameter): The start date of the historical data range.
+  - `end_date` (query parameter): The end date of the historical data range.
